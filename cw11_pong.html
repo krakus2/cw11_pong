@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gra Pong</title>
+
+  <style>
+    body{
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
+      background-color: darkgrey;
+    }
+    #canvas{
+      cursor: none;
+    }
+
+    #result{
+      width: 1000px;
+      display: flex;
+      flex-direction: row;
+      margin-bottom: 30px;
+      font-size: 30px;
+    }
+    #first{
+      width: 500px;
+      display: flex;
+      justify-content: center;
+    }
+    #second{
+      width: 500px;
+      display: flex;
+      justify-content: center;
+    }
+
+    #aiRes{
+      padding-left: 5px;
+    }
+    #pRes{
+      padding-left: 5px;
+    }
+  </style>
+</head>
+<body>
+<div id='result'>
+  <div id='first'>Player: <span id='pRes'>0</span></div>
+  <div id='second'> AI: <span id='aiRes'>0</span></div>
+</div>
+<canvas id='canvas'></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 1000;
+    canvas.height = 500;
+    cw = canvas.width;
+    ch = canvas.height;
+
+    const ballSize = 20;
+    let ballX = cw/2 - ballSize/2;
+    let ballY = ch/2 - ballSize/2;
+
+    const paddleHeight = 100;
+    const paddleWidth = 20;
+
+    const playerX = 70;
+    const aiX = 910;
+    let playerY = 200;
+    let aiY = 200;
+
+    const lineWidth = 6;
+    const lineHeight = 16;
+
+    let ballSpeedX = -1;
+    let ballSpeedY = -1;
+
+    let playerPoints = 0;
+    let aiPoints = 0;
+
+    let ballPosition;
+
+    function player(){
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(playerX, playerY, paddleWidth, paddleHeight);
+    }
+
+    function AI(){
+      ctx.fillStyle = 'red';
+      ctx.fillRect(aiX, aiY, paddleWidth, paddleHeight);
+      aiY = ballY-paddleHeight/3;
+      if(ballX > 200) {
+        //ballPosition = ballX + ()
+      }
+    }
+
+    function table(){
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, cw, ch);
+      ctx.fillStyle = 'grey';
+      for(let i=lineHeight; i<=cw/2-10; i=i+lineHeight*2){
+        ctx.fillRect(cw/2-lineWidth/2, i, lineWidth, lineHeight);
+      }
+      if( (playerX+ballSize >= ballX &&(ballY>=playerY && ballY<=playerY+100)) ){
+        ballSpeedX = -ballSpeedX;
+      }
+      if( (aiX-ballSize <= ballX &&(ballY>=aiY && ballY<=aiY+100)) ){
+        ballSpeedX = -ballSpeedX;
+      }
+    }
+
+    function ball(){
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(ballX, ballY, ballSize, ballSize);
+
+      ballX += ballSpeedX;
+      ballY += ballSpeedY;
+
+      console.log(ballSpeedX, ballSpeedY)
+      if(ballY >= ch-ballSize || ballY <= 0){
+        ballSpeedY = -ballSpeedY
+        if(ballSpeedX<5){
+          if(ballSpeedX<0){
+            ballSpeedX = ballSpeedX-0.5;
+          }else{
+            ballSpeedX = ballSpeedX+0.5;
+          }
+        }
+      }
+
+      if(ballX >= cw-ballSize || ballX <= 0){
+        ballSpeedX = -ballSpeedX
+        if(ballSpeedX<5 && ballSpeedX>-5){
+          if(ballSpeedX<0){
+            ballSpeedX = ballSpeedX-0.5;
+          }else{
+            ballSpeedX = ballSpeedX+0.5;
+          }
+        }
+      }
+
+      if(ballX <= 10){
+        ballX = cw/2-ballSize/2;
+        ballY = (Math.floor(Math.random()*460))+20
+        aiPoints++;
+        aiRes.innerHTML = aiPoints;
+        ballSpeedX = 1;
+      }
+
+      if(ballX >= 990){
+        ballX = cw/2-ballSize/2;
+        ballY = (Math.floor(Math.random())*460)+20
+        playerPoints++;
+        pRes.innerHTML = playerPoints;
+        ballSpeedX = -1;
+      }
+
+    }
+
+    function game(){
+      table();
+      ball();
+      player();
+      AI();
+    }
+    setInterval(game, 1)
+
+    canvas.addEventListener('mousemove', e => {
+      //console.log(e.offsetY)
+      if(e.offsetY>450){
+        playerY = 400
+      }else if(e.offsetY<50){
+        playerY = 0
+      }else{
+        playerY = e.offsetY - paddleHeight/2;
+      }
+    })
+  </script>
+</body>
+</html>
