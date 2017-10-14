@@ -75,13 +75,17 @@
     const lineWidth = 6;
     const lineHeight = 16;
 
-    let ballSpeedX = -1;
-    let ballSpeedY = -1;
+    const paddelHeight = 100;
+    const paddelWidth = 20;
+
+    let ballSpeedX = -4;
+    let ballSpeedY = -4;
 
     let playerPoints = 0;
     let aiPoints = 0;
 
-    let ballPosition;
+    let ballPosition1;
+    let ballPosition2;
 
     function player(){
       ctx.fillStyle = 'blue';
@@ -91,11 +95,56 @@
     function AI(){
       ctx.fillStyle = 'red';
       ctx.fillRect(aiX, aiY, paddleWidth, paddleHeight);
-      aiY = ballY-paddleHeight/3;
-      if(ballX > 200) {
-        //ballPosition = ballX + ()
+
+      if(ballX > 800 && ballX <810 && ballSpeedX>0) {
+          ballPosition2 = ballY + (190/ballSpeedX*ballSpeedY)
+      }
+
+    /*  if(ballX > 500 && ballX < 510){
+        ballPosition1 = ballY;
+      }
+      if(ballPosition2-ballPosition1<50){
+        aiY=+1
+      }else if(ballPosition2>=50 && ballPosition2<150){
+        aiY=+1
+      }else if(ballPosition2>=150 && ballPosition2<350){
+        aiY=+1
+      }else if(ballPosition2>=350 && ballPosition2<450){
+        aiY=+1
+      }else if(ballPosition2>=450){
+        aiY=+1
+      }*/
+      const middlePaddel = aiY + paddelHeight / 2 ;
+      const middleBall = ballY + ballSize / 2;
+      console.log(middlePaddel, middleBall)
+
+      if (ballX > 500){
+        if (middlePaddel - middleBall > 200){
+          aiY -= 25;
+        }else if(middlePaddel - middleBall > 50){
+          aiY -= 13;
+        }else if (middlePaddel - middleBall < -200){
+          aiY += 25;
+        }else if (middlePaddel - middleBall < -50){
+          aiY += 13;
+        }
+      }
+      if (ballX <= 500 ){
+        if (middlePaddel - middleBall > 100){
+          aiY -= 3;
+        }
+        if(middlePaddel - middleBall < -100){
+          aiY += 3;
+        }
+      }
+      if (aiY >= ch - paddelHeight){
+        aiY = ch - paddelHeight
+      }else if(aiY <= 0){
+        aiY = 0;
       }
     }
+
+
 
     function table(){
       ctx.fillStyle = '#000';
@@ -119,14 +168,13 @@
       ballX += ballSpeedX;
       ballY += ballSpeedY;
 
-      console.log(ballSpeedX, ballSpeedY)
       if(ballY >= ch-ballSize || ballY <= 0){
         ballSpeedY = -ballSpeedY
         if(ballSpeedX<5){
           if(ballSpeedX<0){
-            ballSpeedX = ballSpeedX-0.5;
+            ballSpeedX = ballSpeedX-2;
           }else{
-            ballSpeedX = ballSpeedX+0.5;
+            ballSpeedX = ballSpeedX+2;
           }
         }
       }
@@ -148,16 +196,13 @@
         aiPoints++;
         aiRes.innerHTML = aiPoints;
         ballSpeedX = 1;
-      }
-
-      if(ballX >= 990){
+      }else if(ballX >= 970){
         ballX = cw/2-ballSize/2;
-        ballY = (Math.floor(Math.random())*460)+20
+        ballY = (Math.floor(Math.random()*460))+20
         playerPoints++;
         pRes.innerHTML = playerPoints;
         ballSpeedX = -1;
       }
-
     }
 
     function game(){
@@ -166,7 +211,7 @@
       player();
       AI();
     }
-    setInterval(game, 1)
+    setInterval(game, 1000/60)
 
     canvas.addEventListener('mousemove', e => {
       //console.log(e.offsetY)
@@ -178,6 +223,14 @@
         playerY = e.offsetY - paddleHeight/2;
       }
     })
+
+    /*echo "# cw11_pong" >> README.md
+    git init
+    git add cw11_pong.html
+    git commit -m "first commit"
+    git remote add origin https://github.com/krakus2/cw11_pong.git
+    git push -u origin master
+    */
   </script>
 </body>
 </html>
